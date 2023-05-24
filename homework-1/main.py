@@ -15,7 +15,7 @@ class BaseClass:
         with open(self.csv_file, encoding='utf-8') as file:
 
             data = []
-            file_reader = csv.reader(file, delimiter=",")
+            file_reader = csv.DictReader(file, delimiter=",")
             for row in file_reader:
 
                 data.append(row)
@@ -33,14 +33,11 @@ class BaseClass:
                     if count == 0:# это что  бы название стобцов не лезло в бд
                         count = 1
                         continue
-                        # вобще идея у меня была написать один метод для всех таблиц и менять только ф-строку,
-                        # но  я так и не справился нормально с экранированием в sql и питоне,поэтмоу просто написал
-                        # 3 разных метода
-                    comp_name = row[1].replace("'", "''")
+                    cur.execute(f'INSERT INTO customers(customer_id, company_name, contact_name) VALUES (%s, %s, %s)',
+                    (row["customer_id"], row["company_name"], row["contact_name"]))
 
-                    cur.execute(
-                    f"INSERT INTO customers VALUES ('{row[0]}', '{comp_name}', '{row[2]}');")
-            conn.commit()
+
+
     def employees(self):
         '''МЕтод для  employees'''
         self.csv_file = os.path.join('north_data', 'employees_data.csv')
@@ -55,8 +52,10 @@ class BaseClass:
                         continue
 
                     cur.execute(
-                    f"INSERT INTO employees VALUES ('{row[0]}', '{row[1]}', '{row[2]}', '{row[3]}', '{row[4]}');")
-            conn.commit()
+                    f'INSERT INTO employees(first_name, last_name, title, birth_date, notes) VALUES (%s, %s, %s, %s, %s)',
+                    (row["first_name"], row["last_name"], row["title"], row["birth_date"], row["notes"]))
+
+            #conn.commit()
     def orders(self):
         '''Метод для orders'''
         self.csv_file = os.path.join('north_data', 'orders_data.csv')
@@ -71,8 +70,9 @@ class BaseClass:
                         continue
 
                     cur.execute(
-                        f"INSERT INTO orders VALUES ({row[0]}, '{row[1]}', '{row[2]}', '{row[3]}', '{row[4]}');")
-            conn.commit()
+                        f'INSERT INTO orders(order_id, customer_id, employee_id, order_date, ship_city) VALUES (%s, %s, %s, %s, %s)',
+                    (row["order_id"], row["customer_id"], row["employee_id"], row["order_date"], row["ship_city"]))
+            #conn.commit()
 # я хотел что бы синтаксис был типа copy1 = BaseClass(файл,ф-строка), что бы можно было подключать любые csv
 
 copy1 = BaseClass()
