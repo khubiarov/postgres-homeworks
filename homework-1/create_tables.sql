@@ -1,27 +1,25 @@
-create table customers
+CREATE TABLE customers
 (
-	customer_id varchar(100) PRIMARY KEY,
-	company_name varchar(100),
-	contact_name varchar(100)
-
+	customer_id varchar(5) PRIMARY KEY,
+	company_name varchar(50) NOT NULL,
+	contact_name varchar(50) NOT NULL
 );
 
-
-create table orders
+CREATE TABLE employees
 (
-	order_id int PRIMARY KEY,
-	customer_id varchar(100)UNIQUE REFERENCES orders(customer_id),
-	employee_id varchar(100),
-	order_date varchar(100),
-	ship_city varchar(100)
-);
-
-create table employees
-(
-    first_name varchar(100),
-	last_name varchar(100),
-	title varchar(100),
-	birth_date varchar(100),
+	employee_id  int PRIMARY KEY,
+	first_name varchar(20) NOT NULL,
+	last_name varchar(20) NOT NULL,
+	title varchar(50) NOT NULL,
+	birth_date date,
 	notes text
 );
 
+CREATE TABLE orders
+(
+	order_id int NOT NULL,
+	customer_id varchar(5) REFERENCES customers(customer_id) ,
+	employee_id int REFERENCES employees(employee_id) ,
+	order_date date NOT NULL,
+	ship_city varchar(40)
+);
