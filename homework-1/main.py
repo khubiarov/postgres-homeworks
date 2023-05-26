@@ -30,9 +30,8 @@ class BaseClass:
             with conn.cursor() as cur:
                 count = 0
                 for row in data:
-                    if count == 0:# это что  бы название стобцов не лезло в бд
-                        count = 1
-                        continue
+                    #if count == 0:# это что  бы название стобцов не лезло в бд
+                     ##  continue
                     cur.execute(f'INSERT INTO customers(customer_id, company_name, contact_name) VALUES (%s, %s, %s)',
                     (row["customer_id"], row["company_name"], row["contact_name"]))
 
@@ -42,20 +41,18 @@ class BaseClass:
         '''МЕтод для  employees'''
         self.csv_file = os.path.join('north_data', 'employees_data.csv')
         data = self.get_csv()
-        count = 0
+        count = 1
         with psycopg2.connect(database='north', user='postgres', password=self.paswd) as conn:
             with conn.cursor() as cur:
                 for row in data:
 
-                    if count == 0:
-                        count = 1
-                        continue
+
 
                     cur.execute(
-                    f'INSERT INTO employees(first_name, last_name, title, birth_date, notes) VALUES (%s, %s, %s, %s, %s)',
-                    (row["first_name"], row["last_name"], row["title"], row["birth_date"], row["notes"]))
-
-            #conn.commit()
+                    f'INSERT INTO employees(employee_id, first_name, last_name, title, birth_date, notes) VALUES (%s, %s, %s, %s, %s, %s)',
+                    (count, row["first_name"], row["last_name"], row["title"], row["birth_date"], row["notes"]))
+                    count += 1
+                    conn.commit()
     def orders(self):
         '''Метод для orders'''
         self.csv_file = os.path.join('north_data', 'orders_data.csv')
@@ -65,9 +62,9 @@ class BaseClass:
             with conn.cursor() as cur:
                 for row in data:
 
-                    if count == 0:
-                        count = 1
-                        continue
+                    #if count == 0:
+                     #   count = 1
+                       # continue
 
                     cur.execute(
                         f'INSERT INTO orders(order_id, customer_id, employee_id, order_date, ship_city) VALUES (%s, %s, %s, %s, %s)',
